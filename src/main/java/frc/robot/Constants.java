@@ -1,0 +1,180 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+// package org.jmhsrobotics.frc2026;
+package frc.robot;
+
+// HOOD REMOVAL (2026-07-17): removed ShooterConstants.kHoodTolerance — see
+// subsystems/shooter/Shooter.java for the full note.
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.RobotBase;
+
+/**
+ * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants should be declared
+ * globally (i.e. public static). Do not put anything functional in this class.
+ *
+ * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * constants are needed, to reduce verbosity.
+ */
+public final class Constants {
+  public static final Mode simMode = Mode.SIM;
+  public static final double ksimTimestep = 0.02;
+  public static final double krealTimeStep = ksimTimestep;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+
+  public static class OperatorConstants {
+    public static final int kDriverControllerPort = 0;
+  }
+
+  public static final class LEDConstants {
+    public static final int kPWMHeader = 5;
+    // led length in pixels
+    public static final int kLength = 150;
+    // Density of the LED Strip - currently set at 120 LEDs per meter
+    public static final Distance kSpacing = Meters.of(1.0 / 60);
+    // number of times the flashcommand will change color per second
+    public static final double kFlashFrequency = 10;
+  }
+
+  public static class CAN {
+    // 10s are drive
+    // 20s are turn
+    // 30s are encoders + gyro
+    // 40s are indexer
+    // 50s are shooter (adjacent)
+    // 60s are slapdown + intake
+
+    public static final int kCanAndGyroID = 35;
+
+    public static final int kFrontLeftIndexerMotorID = 40;
+    public static final int kBackLeftIndexerMotorID = 41;
+    public static final int kFrontRightIndexerMotorID = 42;
+    public static final int kBackRightIndexerMotorID = 43;
+
+    public static final int kLeftTopShooterMotorID = 50;
+    public static final int kLeftBottomShooterMotorID = 51;
+    public static final int kRightTopShooterMotorID = 52;
+    public static final int kRightBottomShooterMotorID = 53;
+
+    public static final int kSlapdownMotorID = 60;
+    public static final int kIntakeMotorID = 61;
+    public static final int kIntakeFollowerMotorID = 62;
+
+    // old shooter & climber constants (delete em?)
+    public static final int kLeftFlywheelMotorID = 50;
+    public static final int kCenterFlywheelMotorID = 51;
+    public static final int kRightFlywheelMotorID = 52;
+
+    public static final int kClimberMotorID = 30;
+
+    // also, feeder dont rlly exist anymore...
+    public static final int kShooterIntakeMotorID = 54;
+  }
+
+  public static class DoryCAN {
+    public static final int kIndexerMotorID = 0;
+    public static final int kIntakeMotorID = 50;
+    public static final int kSlapDownMotorID = 40;
+    public static final int kShooterMotorID = 55;
+  }
+
+  public static class Auto {
+    public static final Pose2d hubStartBLUE = new Pose2d(3.569, 4.051, new Rotation2d(0.0));
+    public static final Pose2d leftTrenchStartBLUE = new Pose2d(3.5, 7.55, new Rotation2d(0));
+    public static final Pose2d rightTrenchStartBLUE = new Pose2d(3.50, 0.6, new Rotation2d(0));
+    public static final Pose2d leftBumpStartBLUE = new Pose2d(3.50, 2.5, new Rotation2d(0));
+    public static final Pose2d rightBumpStartBLUE = new Pose2d(3.50, 5.5, new Rotation2d(0));
+
+    public static final Pose2d hubStartRED = new Pose2d(13.00, 4.051, new Rotation2d(135.0));
+    public static final Pose2d leftTrenchStartRED = new Pose2d(13.00, 0.6, new Rotation2d(180.0));
+    public static final Pose2d rightTrenchStartRED = new Pose2d(13.0, 7.55, new Rotation2d(180.0));
+    public static final Pose2d leftBumpStartRED = new Pose2d(13.0, 2.5, new Rotation2d(180.0));
+    public static final Pose2d rightBumpStartRED = new Pose2d(13.0, 5.5, new Rotation2d(180.0));
+  }
+
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
+
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
+
+  public static class ShooterConstants {
+
+    public static final double kP = 0.3;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+
+    public static final double kOnboardP = 0;
+    public static final double kOnboardI = 0.0;
+    public static final double kOnboardD = 0.0;
+    public static final double kOnboardV = 0;
+
+    // public static final double kBaseRPM = 3400;
+    public static final double kBaseRPM = 3400;
+    public static final double kShooterTolerance = 100;
+    // public static final double kShooterDutyCycle = 0.6;
+    public static final double kShooterDutyCycle = 0.05;
+    public static final double kShooterRPMOffset = 0.0;
+
+    // public static final double kHubSetPointRPM = 2600.0;
+    // public static final double kAutoHubSetPointRPM = 2600.0;
+    public static final double kHubSetPointRPM = 60;
+    public static final double kAutoHubSetPointRPM = 60;
+
+    // FeedForward Constants - These are just guesses, will need to be tuned
+    public static final double kS = 0.2; // Static Component of Friction
+    public static final double kV = 0.12521; // Velocity Gain
+    public static final double kA = 0.069312;
+  }
+
+  public static class Intake {
+    // public static final double kBaseRPM = 3000;
+    public static final double kBaseRPM = 60;
+
+    public static final double kSpeedDutyCycle = 1.0;
+  }
+
+  public static class Slapdown {
+    public static final double kSlapdownUpPositionDegrees = 60; // TODO update this (IMPORTANT)
+    public static final double kSlapdownDownPositionDegrees = 180; // TODO update this (IMPORTANT)
+    public static final double kSlapdownToleranceDegrees = 5; // TODO update this (IMPORTANT)
+    public static final double kSlapdownJiggleUpDegrees = 70;
+    public static final double kSlapdownJiggleDownDegrees = 150;
+
+    public static final double kSlapdownP = 20.0;
+    public static final double kSlapdownI = 0.0;
+    public static final double kSlapdownD = 0.0;
+  }
+
+  public static class Indexer {
+    public static final double kSpeedDutyCycle = 1;
+
+    // Jam detection: high current + (near) zero velocity while commanded to run
+    public static final double kJamMinCommandDutyCycle = 0.1;
+    public static final double kJamCurrentThresholdAmps = 30.0; // TODO tune (IMPORTANT)
+    public static final double kJamVelocityThresholdRPM = 200.0; // TODO tune (IMPORTANT)
+    public static final double kJamDetectionSeconds = 0.15; // sustained stall time before reacting
+    public static final double kJamReverseDutyCycle = 0.6;
+    public static final double kJamReverseSeconds = 0.4; // how long to run in reverse to clear
+  }
+
+  public static class Feeder {
+    public static final double kSpeedDutyCycle = 0.8;
+  }
+
+  public static class Climber {
+    public static final double kCMPerRotation = 1.0; // TODO update this (IMPORTANT)
+    public static final double kSpeedDutyCycle = 0.4;
+  }
+}
