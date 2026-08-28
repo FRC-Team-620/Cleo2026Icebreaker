@@ -1,12 +1,14 @@
 package frc.robot.subsystems.shooter;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
-import org.littletonrobotics.junction.Logger;
+import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 
 public class Shooter extends SubsystemBase {
   private final ShooterIO io;
-  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
+  private final ShooterIOInputs inputs = new ShooterIOInputs();
 
   public Shooter(ShooterIO io) {
     this.io = io;
@@ -16,7 +18,10 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // Update inputs from IO
     io.updateInputs(inputs);
-    Logger.processInputs("Shooter", inputs);
+    // Logger.processInputs("Shooter", inputs);
+    Logger.recordOutput("IntakeTemp", inputs.temperatureC);
+    Logger.recordOutput("IntakeCurrent", inputs.currentAmps);
+    Logger.recordOutput("IntakeVelocity", inputs.velocityRPM);
   }
 
   /** Closed loop velocity control. Positive spins the flywheels in the shooting direction. */
