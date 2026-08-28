@@ -103,8 +103,7 @@ public class KrakenIntakeIO implements IntakeIO {
 
     // Voltage and current are summed across both motors, temperature is the hottest of the two,
     // and velocity is taken from the lead motor only (the follower mirrors it).
-    inputs.motorVoltage =
-        leadAppliedVolts.getValueAsDouble();
+    inputs.motorVoltage = leadAppliedVolts.getValueAsDouble();
     inputs.motorCurrentAMPS = leadCurrent.getValueAsDouble() + followCurrent.getValueAsDouble();
     inputs.motorTemperatureC =
         Math.max(leadTemperature.getValueAsDouble(), followTemperature.getValueAsDouble());
