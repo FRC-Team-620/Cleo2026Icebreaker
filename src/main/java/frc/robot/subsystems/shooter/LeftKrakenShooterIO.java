@@ -11,24 +11,20 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
-public class KrakenShooterIO implements ShooterIO {
+public class LeftKrakenShooterIO implements ShooterIO {
   private TalonFX leadMotor;
   private TalonFX leftBottomMotor;
-  private TalonFX rightTopMotor;
-  private TalonFX rightBottomMotor;
+  // private TalonFX rightTopMotor;
+  // private TalonFX rightBottomMotor;
 
   private TalonFXConfiguration config;
 
-  public KrakenShooterIO() {
+  public LeftKrakenShooterIO() {
     leadMotor = new TalonFX(Constants.CAN.kLeftTopShooterMotorID);
-    leftBottomMotor = new TalonFX(Constants.CAN.kLeftBottomShooterMotorID);
-    rightTopMotor = new TalonFX(Constants.CAN.kRightTopShooterMotorID);
-    rightBottomMotor = new TalonFX(Constants.CAN.kRightBottomShooterMotorID);
-
     leadMotor.getConfigurator().apply(new TalonFXConfiguration());
+
+    leftBottomMotor = new TalonFX(Constants.CAN.kLeftBottomShooterMotorID);
     leftBottomMotor.getConfigurator().apply(new TalonFXConfiguration());
-    rightTopMotor.getConfigurator().apply(new TalonFXConfiguration());
-    rightBottomMotor.getConfigurator().apply(new TalonFXConfiguration());
 
     config = new TalonFXConfiguration();
     // config.slot0.kP = ShooterConstants.kP;
@@ -49,16 +45,10 @@ public class KrakenShooterIO implements ShooterIO {
 
     tryUntilOk(5, () -> leadMotor.getConfigurator().apply(config, 0.25));
     tryUntilOk(5, () -> leftBottomMotor.getConfigurator().apply(config, 0.25));
-    tryUntilOk(5, () -> rightTopMotor.getConfigurator().apply(config, 0.25));
-    tryUntilOk(5, () -> rightBottomMotor.getConfigurator().apply(config, 0.25));
 
     // Set followers
     leftBottomMotor.setControl(
         new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Aligned));
-    rightTopMotor.setControl(
-        new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Opposed));
-    rightBottomMotor.setControl(
-        new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Opposed));
   }
 
   public void setVoltage(double volts) {

@@ -11,23 +11,19 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
-public class KrakenShooterIO implements ShooterIO {
-  private TalonFX leadMotor;
-  private TalonFX leftBottomMotor;
-  private TalonFX rightTopMotor;
+public class RightKrakenShooterIO implements ShooterIO {
+  // private TalonFX leadMotor;
+  // private TalonFX leftBottomMotor;
+  private TalonFX rightLeadMotor;
   private TalonFX rightBottomMotor;
 
   private TalonFXConfiguration config;
 
-  public KrakenShooterIO() {
-    leadMotor = new TalonFX(Constants.CAN.kLeftTopShooterMotorID);
-    leftBottomMotor = new TalonFX(Constants.CAN.kLeftBottomShooterMotorID);
-    rightTopMotor = new TalonFX(Constants.CAN.kRightTopShooterMotorID);
-    rightBottomMotor = new TalonFX(Constants.CAN.kRightBottomShooterMotorID);
+  public RightKrakenShooterIO() {
+    rightLeadMotor = new TalonFX(Constants.CAN.kRightTopShooterMotorID);
+    rightLeadMotor.getConfigurator().apply(new TalonFXConfiguration());
 
-    leadMotor.getConfigurator().apply(new TalonFXConfiguration());
-    leftBottomMotor.getConfigurator().apply(new TalonFXConfiguration());
-    rightTopMotor.getConfigurator().apply(new TalonFXConfiguration());
+    rightBottomMotor = new TalonFX(Constants.CAN.kRightBottomShooterMotorID);
     rightBottomMotor.getConfigurator().apply(new TalonFXConfiguration());
 
     config = new TalonFXConfiguration();
@@ -47,25 +43,19 @@ public class KrakenShooterIO implements ShooterIO {
     // rightTopMotor.getConfigurator().apply(config);
     // rightBottomMotor.getConfigurator().apply(config);
 
-    tryUntilOk(5, () -> leadMotor.getConfigurator().apply(config, 0.25));
-    tryUntilOk(5, () -> leftBottomMotor.getConfigurator().apply(config, 0.25));
-    tryUntilOk(5, () -> rightTopMotor.getConfigurator().apply(config, 0.25));
+    tryUntilOk(5, () -> rightLeadMotor.getConfigurator().apply(config, 0.25));
     tryUntilOk(5, () -> rightBottomMotor.getConfigurator().apply(config, 0.25));
 
     // Set followers
-    leftBottomMotor.setControl(
-        new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Aligned));
-    rightTopMotor.setControl(
-        new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Opposed));
     rightBottomMotor.setControl(
-        new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Opposed));
+        new Follower(Constants.CAN.kRightTopShooterMotorID, MotorAlignmentValue.Aligned));
   }
 
   public void setVoltage(double volts) {
-    leadMotor.setVoltage(volts);
+    rightLeadMotor.setVoltage(volts);
   }
 
   public void stop() {
-    leadMotor.stopMotor();
+    rightLeadMotor.stopMotor();
   }
 }
