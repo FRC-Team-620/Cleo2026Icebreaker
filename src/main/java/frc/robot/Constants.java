@@ -162,6 +162,10 @@ public final class Constants {
   }
 
   public static class Indexer {
+    // Four Krakens, two per side, direct driving the mechanism
+    public static final double kGearRatio = 1.0;
+    public static final double kStatorCurrentLimitAmps = 60.0; // TODO tune
+
     public static final double kSpeedDutyCycle = 1;
 
     // Jam detection: high current + (near) zero velocity while commanded to run
