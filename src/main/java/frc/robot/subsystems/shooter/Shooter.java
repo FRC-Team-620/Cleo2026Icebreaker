@@ -41,6 +41,10 @@ public class Shooter extends SubsystemBase {
     return inputs.velocityRPM;
   }
 
+  public void stop() {
+    io.stop();
+  }
+
   /** True when the shooter is running closed loop and is up to its commanded speed. */
   public boolean atSetpoint() {
     return inputs.desiredRPM != 0.0

@@ -27,4 +27,6 @@ public interface ShooterIO {
   public default void setVoltage(double volts) {}
 
   public default void setBrakeMode(boolean enable) {}
+
+  public default void stop() {}
 }

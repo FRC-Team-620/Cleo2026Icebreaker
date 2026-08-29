@@ -194,4 +194,8 @@ public class KrakenShooterIO implements ShooterIO {
     tryUntilOk(5, () -> rightLeadMotor.getConfigurator().apply(rightConfig.MotorOutput, 0.25));
     tryUntilOk(5, () -> rightFollowMotor.getConfigurator().apply(rightConfig.MotorOutput, 0.25));
   }
+
+  public void stop() {
+    leftLeadMotor.stopMotor();
+  }
 }

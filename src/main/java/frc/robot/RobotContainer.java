@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.CommandIntake;
+import frc.robot.commands.CommandShooter;
+import frc.robot.commands.CommandSlapdownOpenLoop;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -197,7 +199,13 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    controller.y().whileTrue(new CommandIntake(intake, 1.0));
+    controller.x().whileTrue(new CommandIntake(intake, 1.0));
+
+    controller.y().whileTrue(new CommandShooter(shooter, Constants.ShooterConstants.kBaseRPM));
+
+
+    controller.rightBumper().whileTrue(new CommandSlapdownOpenLoop(slapdown, 0.5));
+    controller.leftBumper().whileTrue(new CommandSlapdownOpenLoop(slapdown, -0.5));
   }
 
   /**
