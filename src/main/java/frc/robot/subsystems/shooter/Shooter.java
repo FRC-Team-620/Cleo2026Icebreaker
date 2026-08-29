@@ -1,7 +1,6 @@
 package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIO.ShooterIOInputs;
 import org.littletonrobotics.junction.Logger;
 
@@ -46,8 +45,9 @@ public class Shooter extends SubsystemBase {
   }
 
   /** True when the shooter is running closed loop and is up to its commanded speed. */
-  public boolean atSetpoint() {
-    return inputs.desiredRPM != 0.0
-        && Math.abs(inputs.desiredRPM - inputs.velocityRPM) <= ShooterConstants.kShooterTolerance;
-  }
+  // public boolean atSetpoint() {
+  //   return inputs.desiredRPM != 0.0
+  //       && Math.abs(inputs.desiredRPM - inputs.velocityRPM) <=
+  // ShooterConstants.kShooterTolerance;
+  // }
 }

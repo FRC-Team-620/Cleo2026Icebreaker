@@ -21,6 +21,7 @@ public class Slapdown extends SubsystemBase {
     Logger.recordOutput("SlapdownCurrent", inputs.currentAmps);
     Logger.recordOutput("SlapdownTemp", inputs.temperatureC);
     Logger.recordOutput("SlapdownGoalAngle", inputs.goalAngleDegrees);
+    Logger.recordOutput("SlapdownInOpenLoop", inputs.inCloseLoop);
   }
 
   /** Closed loop position control. */

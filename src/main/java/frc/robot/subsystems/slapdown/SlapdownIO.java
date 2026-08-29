@@ -19,6 +19,8 @@ public interface SlapdownIO {
 
     /** Closed loop setpoint, zero whenever the slapdown is being run open loop. */
     public double goalAngleDegrees;
+
+    public boolean inCloseLoop;
   }
 
   public default void updateInputs(SlapdownIOInputs inputs) {}

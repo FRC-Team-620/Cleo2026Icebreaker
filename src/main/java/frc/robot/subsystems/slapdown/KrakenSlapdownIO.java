@@ -7,6 +7,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -38,6 +39,7 @@ public class KrakenSlapdownIO implements SlapdownIO {
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.CurrentLimits.StatorCurrentLimit = Slapdown.kStatorCurrentLimitAmps;
     config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.Feedback.SensorToMechanismRatio = Slapdown.kGearRatio;
     config.Slot0.kP = Slapdown.kSlapdownP;
     config.Slot0.kI = Slapdown.kSlapdownI;
@@ -65,7 +67,8 @@ public class KrakenSlapdownIO implements SlapdownIO {
     inputs.velocityRPM = velocity.getValueAsDouble() * 60.0;
     inputs.currentAmps = current.getValueAsDouble();
     inputs.temperatureC = temperature.getValueAsDouble();
-    inputs.goalAngleDegrees = closedLoop ? goalAngleDegrees : 0.0;
+    inputs.goalAngleDegrees = goalAngleDegrees;
+    inputs.inCloseLoop = closedLoop;
   }
 
   @Override

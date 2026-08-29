@@ -25,19 +25,16 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIO;
-import frc.robot.subsystems.indexer.KrakenIndexerIO;
 import frc.robot.subsystems.indexer.SimIndexerIO;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.KrakenIntakeIO;
 import frc.robot.subsystems.intake.SimIntakeIO;
-import frc.robot.subsystems.shooter.KrakenShooterIO;
+import frc.robot.subsystems.shooter.ClaudeShooterIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.SimShooterIO;
@@ -75,16 +72,24 @@ public class RobotContainer {
         // Real robot, instantiate hardware IO implementations
         // ModuleIOTalonFX is intended for modules with TalonFX drive, TalonFX turn, and
         // a CANcoder
+        // drive =
+        //     new Drive(
+        //         new GyroIOPigeon2(),
+        //         new ModuleIOTalonFX(TunerConstants.FrontLeft),
+        //         new ModuleIOTalonFX(TunerConstants.FrontRight),
+        //         new ModuleIOTalonFX(TunerConstants.BackLeft),
+        //         new ModuleIOTalonFX(TunerConstants.BackRight));
         drive =
             new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight));
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {});
         intake = new Intake(new KrakenIntakeIO());
-        shooter = new Shooter(new KrakenShooterIO());
-        indexer = new Indexer(new KrakenIndexerIO());
+        shooter = new Shooter(new ClaudeShooterIO());
+        // indexer = new Indexer(new KrakenIndexerIO());
+        indexer = new Indexer(new IndexerIO() {});
         slapdown = new Slapdown(new KrakenSlapdownIO());
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
@@ -186,11 +191,11 @@ public class RobotContainer {
                 () -> Rotation2d.kZero));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
     controller
-        .rightBumper()
+        .a()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -199,13 +204,24 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
+    // intake forward
     controller.x().whileTrue(new CommandIntake(intake, 1.0));
 
+    // shooter spinup
     controller.y().whileTrue(new CommandShooter(shooter, Constants.ShooterConstants.kBaseRPM));
 
+    // indexer forward
+    // spins wrong way
+    // controller.b().whileTrue(new CommandIndexer(indexer, .5));
 
+    // slapdown up
     controller.rightBumper().whileTrue(new CommandSlapdownOpenLoop(slapdown, 0.5));
+
+    // slapdown down
     controller.leftBumper().whileTrue(new CommandSlapdownOpenLoop(slapdown, -0.5));
+
+    // SmartDashboard.putData("Slapdown Open Loop forward", new CommandSlapdownOpenLoop(slapdown,
+    // 1));
   }
 
   /**

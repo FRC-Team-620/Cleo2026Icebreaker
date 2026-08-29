@@ -1,4 +1,4 @@
-package frc.robot.subsystems.indexer;
+package frc.robot.subsystems.shooter;
 
 import static frc.robot.util.PhoenixUtil.*;
 
@@ -6,6 +6,8 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -15,15 +17,15 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import frc.robot.Constants;
-import frc.robot.Constants.Indexer;
+import frc.robot.Constants.ShooterConstants;
 
 /**
- * Hardware IO for the four Kraken indexer motors. Each side is a pulley coupled pair (front leads,
- * back follows in the same direction), and the right side is inverted relative to the left so that
- * a positive command feeds on both sides. The indexer is direct driven, so the rotor and the
- * mechanism turn at the same speed.
+ * Hardware IO for the four Kraken flywheel shooter. Each side is a pulley coupled pair (top leads,
+ * bottom follows in the same direction), and the right side is inverted relative to the left so
+ * that a positive command shoots on both sides. The flywheels are direct driven, so the rotor and
+ * the flywheel turn at the same speed.
  */
-public class KrakenIndexerIO implements IndexerIO {
+public class KrakenShooterIO implements ShooterIO {
   private final TalonFX leftLeadMotor;
   private final TalonFX leftFollowMotor;
   private final TalonFX rightLeadMotor;
@@ -31,6 +33,11 @@ public class KrakenIndexerIO implements IndexerIO {
 
   private final TalonFXConfiguration leftConfig;
   private final TalonFXConfiguration rightConfig;
+
+  private final VelocityVoltage velocityRequest = new VelocityVoltage(0.0).withSlot(0);
+  private final VoltageOut voltageRequest = new VoltageOut(0.0);
+
+  private double desiredRPM = 0.0;
 
   // status signals
   private final StatusSignal<AngularVelocity> leftLeadVelocity;
@@ -40,48 +47,59 @@ public class KrakenIndexerIO implements IndexerIO {
   private final StatusSignal<Current> leftFollowCurrent;
   private final StatusSignal<Temperature> leftFollowTemperature;
 
+  // private final StatusSignal<AngularVelocity> rightLeadVelocity;
   private final StatusSignal<Current> rightLeadCurrent;
   private final StatusSignal<Temperature> rightLeadTemperature;
 
   private final StatusSignal<Current> rightFollowCurrent;
   private final StatusSignal<Temperature> rightFollowTemperature;
 
-  public KrakenIndexerIO() {
-    leftLeadMotor = new TalonFX(Constants.CAN.kFrontLeftIndexerMotorID);
-    leftFollowMotor = new TalonFX(Constants.CAN.kBackLeftIndexerMotorID);
-    rightLeadMotor = new TalonFX(Constants.CAN.kFrontRightIndexerMotorID);
-    rightFollowMotor = new TalonFX(Constants.CAN.kBackRightIndexerMotorID);
+  public KrakenShooterIO() {
+    leftLeadMotor = new TalonFX(Constants.CAN.kLeftTopShooterMotorID);
+    leftFollowMotor = new TalonFX(Constants.CAN.kLeftBottomShooterMotorID);
+    rightLeadMotor = new TalonFX(Constants.CAN.kRightTopShooterMotorID);
+    rightFollowMotor = new TalonFX(Constants.CAN.kRightBottomShooterMotorID);
 
     // Both motors on a side share a config, since the pulley makes them spin together
     leftConfig = new TalonFXConfiguration();
     leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    leftConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    leftConfig.CurrentLimits.StatorCurrentLimit = Indexer.kStatorCurrentLimitAmps;
+    leftConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    leftConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.kStatorCurrentLimitAmps;
     leftConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    leftConfig.Feedback.SensorToMechanismRatio = Indexer.kGearRatio;
+    leftConfig.Feedback.SensorToMechanismRatio = ShooterConstants.kGearRatio;
+    leftConfig.Slot0.kS = ShooterConstants.kS;
+    leftConfig.Slot0.kV = ShooterConstants.kOnboardV;
+    leftConfig.Slot0.kP = ShooterConstants.kOnboardP;
+    leftConfig.Slot0.kI = ShooterConstants.kOnboardI;
+    leftConfig.Slot0.kD = ShooterConstants.kOnboardD;
 
     // The right side is mechanically mirrored, so it runs the opposite rotor direction
     rightConfig = new TalonFXConfiguration();
-    rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    rightConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    rightConfig.CurrentLimits.StatorCurrentLimit = Indexer.kStatorCurrentLimitAmps;
-    rightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-    rightConfig.Feedback.SensorToMechanismRatio = Indexer.kGearRatio;
+    // rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    // rightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    // rightConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.kStatorCurrentLimitAmps;
+    // rightConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    // rightConfig.Feedback.SensorToMechanismRatio = ShooterConstants.kGearRatio;
+    // rightConfig.Slot0.kS = ShooterConstants.kS;
+    // rightConfig.Slot0.kV = ShooterConstants.kOnboardV;
+    // rightConfig.Slot0.kP = ShooterConstants.kOnboardP;
+    // rightConfig.Slot0.kI = ShooterConstants.kOnboardI;
+    // rightConfig.Slot0.kD = ShooterConstants.kOnboardD;
 
     tryUntilOk(5, () -> leftLeadMotor.getConfigurator().apply(leftConfig, 0.25));
     tryUntilOk(5, () -> leftFollowMotor.getConfigurator().apply(leftConfig, 0.25));
-    tryUntilOk(5, () -> rightLeadMotor.getConfigurator().apply(rightConfig, 0.25));
-    tryUntilOk(5, () -> rightFollowMotor.getConfigurator().apply(rightConfig, 0.25));
+    // tryUntilOk(5, () -> rightLeadMotor.getConfigurator().apply(leftConfig, 0.25));
+    // tryUntilOk(5, () -> rightFollowMotor.getConfigurator().apply(rightConfig, 0.25));
 
-    // Both motors of a pair are belted together, so each follower runs with its lead
-    rightLeadMotor.setControl(
-        new Follower(Constants.CAN.kFrontLeftIndexerMotorID, MotorAlignmentValue.Aligned));
+    // // Both motors of a pair are belted together, so each follower runs with its lead
+    // rightLeadMotor.setControl(
+    //     new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Opposed));
     leftFollowMotor.setControl(
-        new Follower(Constants.CAN.kFrontLeftIndexerMotorID, MotorAlignmentValue.Aligned));
-    rightFollowMotor.setControl(
-        new Follower(Constants.CAN.kFrontLeftIndexerMotorID, MotorAlignmentValue.Aligned));
+        new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Aligned));
+    // rightFollowMotor.setControl(
+    //     new Follower(Constants.CAN.kLeftTopShooterMotorID, MotorAlignmentValue.Aligned));
 
-    // Create status signals. Only the left lead needs velocity, the rest mirror it
+    // Create status signals. Only the leads need velocity, the followers mirror them
     leftLeadVelocity = leftLeadMotor.getVelocity();
     leftLeadCurrent = leftLeadMotor.getStatorCurrent();
     leftLeadTemperature = leftLeadMotor.getDeviceTemp();
@@ -89,6 +107,7 @@ public class KrakenIndexerIO implements IndexerIO {
     leftFollowCurrent = leftFollowMotor.getStatorCurrent();
     leftFollowTemperature = leftFollowMotor.getDeviceTemp();
 
+    // rightLeadVelocity = rightLeadMotor.getVelocity();
     rightLeadCurrent = rightLeadMotor.getStatorCurrent();
     rightLeadTemperature = rightLeadMotor.getDeviceTemp();
 
@@ -112,7 +131,7 @@ public class KrakenIndexerIO implements IndexerIO {
   }
 
   @Override
-  public void updateInputs(IndexerIOInputs inputs) {
+  public void updateInputs(ShooterIOInputs inputs) {
     // Refresh all signals
     BaseStatusSignal.refreshAll(
         leftLeadVelocity,
@@ -125,7 +144,7 @@ public class KrakenIndexerIO implements IndexerIO {
         rightFollowCurrent,
         rightFollowTemperature);
 
-    // Current is the draw of the whole indexer and temperature is the hottest motor, so a single
+    // Current is the draw of the whole shooter and temperature is the hottest motor, so a single
     // overheating or stalling motor is still visible in the logs
     inputs.currentAmps =
         leftLeadCurrent.getValueAsDouble()
@@ -140,14 +159,26 @@ public class KrakenIndexerIO implements IndexerIO {
                 rightLeadTemperature.getValueAsDouble(),
                 rightFollowTemperature.getValueAsDouble()));
 
-    // The inversion is handled by the motor config, so the lead reports positive when feeding
-    inputs.velocityRPM = leftLeadVelocity.getValueAsDouble() * 60.0;
+    // Both sides are commanded to the same speed, so the average is the shooter speed. The
+    // inversion is handled by the motor config, so both leads report positive when shooting
+    inputs.velocityRPM = (leftLeadVelocity.getValueAsDouble()) * 60.0;
+    inputs.desiredRPM = desiredRPM;
   }
 
   @Override
-  public void setDutyCycle(double dutyCycle) {
-    leftLeadMotor.set(dutyCycle);
-    rightLeadMotor.set(dutyCycle);
+  public void setRPM(double rpm) {
+    desiredRPM = rpm;
+    double rotationsPerSecond = rpm / 60.0;
+    leftLeadMotor.setControl(velocityRequest.withVelocity(rotationsPerSecond));
+    // rightLeadMotor.setControl(velocityRequest.withVelocity(rotationsPerSecond));
+  }
+
+  @Override
+  public void setVoltage(double volts) {
+    // Open loop, so there is no closed loop setpoint to report
+    // desiredRPM = 0.0;
+    // leftLeadMotor.setControl(voltageRequest.withOutput(volts));
+    leftLeadMotor.setVoltage(volts);
   }
 
   @Override
@@ -161,5 +192,9 @@ public class KrakenIndexerIO implements IndexerIO {
     tryUntilOk(5, () -> leftFollowMotor.getConfigurator().apply(leftConfig.MotorOutput, 0.25));
     tryUntilOk(5, () -> rightLeadMotor.getConfigurator().apply(rightConfig.MotorOutput, 0.25));
     tryUntilOk(5, () -> rightFollowMotor.getConfigurator().apply(rightConfig.MotorOutput, 0.25));
+  }
+
+  public void stop() {
+    leftLeadMotor.stopMotor();
   }
 }
