@@ -150,6 +150,10 @@ public final class Constants {
   }
 
   public static class Slapdown {
+    // Single Kraken, direct driving the mechanism through a 20:1 reduction
+    public static final double kGearRatio = 20.0;
+    public static final double kStatorCurrentLimitAmps = 40.0; // TODO tune
+
     public static final double kSlapdownUpPositionDegrees = 60; // TODO update this (IMPORTANT)
     public static final double kSlapdownDownPositionDegrees = 180; // TODO update this (IMPORTANT)
     public static final double kSlapdownToleranceDegrees = 5; // TODO update this (IMPORTANT)

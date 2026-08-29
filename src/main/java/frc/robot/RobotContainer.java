@@ -39,6 +39,10 @@ import frc.robot.subsystems.shooter.KrakenShooterIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.SimShooterIO;
+import frc.robot.subsystems.slapdown.KrakenSlapdownIO;
+import frc.robot.subsystems.slapdown.SimSlapdownIO;
+import frc.robot.subsystems.slapdown.Slapdown;
+import frc.robot.subsystems.slapdown.SlapdownIO;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -53,6 +57,7 @@ public class RobotContainer {
   private final Intake intake;
   private final Shooter shooter;
   private final Indexer indexer;
+  private final Slapdown slapdown;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -78,6 +83,7 @@ public class RobotContainer {
         intake = new Intake(new KrakenIntakeIO());
         shooter = new Shooter(new KrakenShooterIO());
         indexer = new Indexer(new KrakenIndexerIO());
+        slapdown = new Slapdown(new KrakenSlapdownIO());
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -110,6 +116,7 @@ public class RobotContainer {
         intake = new Intake(new SimIntakeIO());
         shooter = new Shooter(new SimShooterIO());
         indexer = new Indexer(new SimIndexerIO());
+        slapdown = new Slapdown(new SimSlapdownIO());
         break;
 
       default:
@@ -124,6 +131,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         indexer = new Indexer(new IndexerIO() {});
+        slapdown = new Slapdown(new SlapdownIO() {});
         break;
     }
 
