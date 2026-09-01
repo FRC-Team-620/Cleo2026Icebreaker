@@ -15,17 +15,17 @@ public class CommandIndexer extends Command {
 
   @Override
   public void initialize() {
-    indexer.setDutyCycle(dutyCycle);
+    indexer.setSpeed(dutyCycle);
   }
 
   @Override
   public void execute() {
-    indexer.setDutyCycle(dutyCycle);
+    indexer.setSpeed(dutyCycle);
   }
 
   @Override
   public void end(boolean interrupted) {
-    indexer.setDutyCycle(0);
+    indexer.setSpeed(0);
   }
 
   @Override

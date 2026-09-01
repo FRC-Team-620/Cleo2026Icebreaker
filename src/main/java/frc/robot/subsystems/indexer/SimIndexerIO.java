@@ -5,14 +5,18 @@ public class SimIndexerIO implements IndexerIO {
 
   @Override
   public void updateInputs(IndexerIOInputs inputs) {
+    /*public double motorVoltage;
+    public double motorCurrentAMPS;
+    public double motorTemperatureC;
+    public double motorVelocityRPM; */
     // Simulate the indexer motor behavior in simulation
-    inputs.currentAmps = 5.0; // Simulated current
-    inputs.temperatureC = 30.0; // Simulated temperature
-    inputs.velocityRPM = dutyCycle * 6000.0; // Simulated velocity
+    inputs.motorCurrentAMPS = 5.0; // Simulated current
+    inputs.motorTemperatureC = 30.0; // Simulated temperature
+    inputs.motorVelocityRPM = dutyCycle * 6000.0; // Simulated velocity
   }
 
   @Override
-  public void setDutyCycle(double dutyCycle) {
+  public void setSpeed(double dutyCycle) {
     this.dutyCycle = dutyCycle;
   }
 

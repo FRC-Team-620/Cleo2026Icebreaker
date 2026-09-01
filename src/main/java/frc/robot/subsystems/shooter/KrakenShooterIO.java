@@ -49,6 +49,9 @@ public class KrakenShooterIO implements ShooterIO {
 
     tryUntilOk(5, () -> leadMotor.getConfigurator().apply(config, 0.25));
     tryUntilOk(5, () -> leftBottomMotor.getConfigurator().apply(config, 0.25));
+
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
     tryUntilOk(5, () -> rightTopMotor.getConfigurator().apply(config, 0.25));
     tryUntilOk(5, () -> rightBottomMotor.getConfigurator().apply(config, 0.25));
 
