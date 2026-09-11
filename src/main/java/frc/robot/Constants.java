@@ -111,6 +111,10 @@ public final class Constants {
 
   public static class ShooterConstants {
 
+    // Four Krakens, two per side, direct driving the flywheels
+    public static final double kGearRatio = 1.0;
+    public static final double kStatorCurrentLimitAmps = 60.0; // TODO tune
+
     public static final double kP = 0.3;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
@@ -146,6 +150,10 @@ public final class Constants {
   }
 
   public static class Slapdown {
+    // Single Kraken, direct driving the mechanism through a 20:1 reduction
+    public static final double kGearRatio = 20.0;
+    public static final double kStatorCurrentLimitAmps = 40.0; // TODO tune
+
     public static final double kSlapdownUpPositionDegrees = 60; // TODO update this (IMPORTANT)
     public static final double kSlapdownDownPositionDegrees = 180; // TODO update this (IMPORTANT)
     public static final double kSlapdownToleranceDegrees = 5; // TODO update this (IMPORTANT)
@@ -158,6 +166,10 @@ public final class Constants {
   }
 
   public static class Indexer {
+    // Four Krakens, two per side, direct driving the mechanism
+    public static final double kGearRatio = 1.0;
+    public static final double kStatorCurrentLimitAmps = 60.0; // TODO tune
+
     public static final double kSpeedDutyCycle = 1;
 
     // Jam detection: high current + (near) zero velocity while commanded to run
