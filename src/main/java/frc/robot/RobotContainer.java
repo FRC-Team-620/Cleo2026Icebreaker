@@ -34,15 +34,10 @@ import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.SimIndexerIO;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.KrakenIntakeIO;
 import frc.robot.subsystems.intake.SimIntakeIO;
-import frc.robot.subsystems.shooter.KrakenShooterIO;
-import frc.robot.subsystems.shooter.LeftKrakenShooterIO;
-import frc.robot.subsystems.shooter.RightKrakenShooterIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIO;
 import frc.robot.subsystems.shooter.SimShooterIO;
-import frc.robot.subsystems.slapdown.KrakenSlapdownIO;
 import frc.robot.subsystems.slapdown.SimSlapdownIO;
 import frc.robot.subsystems.slapdown.Slapdown;
 import frc.robot.subsystems.slapdown.SlapdownIO;
@@ -62,8 +57,8 @@ public class RobotContainer {
   private final Indexer indexer;
   private final Slapdown slapdown;
 
-  private final Shooter leftShooter;
-  private final Shooter rightShooter;
+  //   private final Shooter leftShooter;
+  //   private final Shooter rightShooter;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -94,14 +89,14 @@ public class RobotContainer {
         //         new ModuleIO() {},
         //         new ModuleIO() {},
         //         new ModuleIO() {});
-        intake = new Intake(new KrakenIntakeIO());
-        shooter = new Shooter(new KrakenShooterIO());
+        intake = new Intake(new IntakeIO() {});
+        shooter = new Shooter(new ShooterIO() {});
         // TO-DO redeclare this as a kraken system
         indexer = new Indexer(new IndexerIO() {});
-        slapdown = new Slapdown(new KrakenSlapdownIO());
+        slapdown = new Slapdown(new SlapdownIO() {});
 
-        leftShooter = new Shooter(new LeftKrakenShooterIO());
-        rightShooter = new Shooter(new RightKrakenShooterIO());
+        // leftShooter = new Shooter(new LeftKrakenShooterIO());
+        // rightShooter = new Shooter(new RightKrakenShooterIO());
 
         // The ModuleIOTalonFXS implementation provides an example implementation for
         // TalonFXS controller connected to a CANdi with a PWM encoder. The
@@ -136,8 +131,8 @@ public class RobotContainer {
         indexer = new Indexer(new SimIndexerIO());
         slapdown = new Slapdown(new SimSlapdownIO());
 
-        leftShooter = new Shooter(new SimShooterIO());
-        rightShooter = new Shooter(new SimShooterIO());
+        // leftShooter = new Shooter(new SimShooterIO());
+        // rightShooter = new Shooter(new SimShooterIO());
         break;
 
       default:
@@ -154,8 +149,8 @@ public class RobotContainer {
         indexer = new Indexer(new IndexerIO() {});
         slapdown = new Slapdown(new SlapdownIO() {});
 
-        leftShooter = new Shooter(new ShooterIO() {});
-        rightShooter = new Shooter(new ShooterIO() {});
+        // leftShooter = new Shooter(new ShooterIO() {});
+        // rightShooter = new Shooter(new ShooterIO() {});
         break;
     }
 
@@ -240,10 +235,10 @@ public class RobotContainer {
     // SmartDashboard.putData("Slapdown Open Loop forward", new CommandSlapdownOpenLoop(slapdown,
     // 1));
 
-    shooterController.x().whileTrue(new CommandShooter(leftShooter, 0));
-    shooterController.b().whileTrue(new CommandShooter(rightShooter, 0));
-    shooterController.y().whileTrue(new CommandShooter(shooter, 0));
-    
+    // shooterController.x().whileTrue(new CommandShooter(leftShooter, 0));
+    // shooterController.b().whileTrue(new CommandShooter(rightShooter, 0));
+    // shooterController.y().whileTrue(new CommandShooter(shooter, 0));
+
   }
 
   /**
