@@ -91,9 +91,12 @@ public class RobotContainer {
         //         new ModuleIO() {});
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
-        // TO-DO redeclare this as a kraken system
         indexer = new Indexer(new IndexerIO() {});
         slapdown = new Slapdown(new SlapdownIO() {});
+        // intake = new Intake(new KrakenIntakeIO());
+        // shooter = new Shooter(new KrakenShooterIO());
+        // indexer = new Indexer(new KrakenIndexerIO());
+        // slapdown = new Slapdown(new KrakenSlapdownIO());
 
         // leftShooter = new Shooter(new LeftKrakenShooterIO());
         // rightShooter = new Shooter(new RightKrakenShooterIO());
